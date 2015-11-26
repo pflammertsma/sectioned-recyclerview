@@ -20,7 +20,7 @@ public class MainAdapter extends SectionedRecyclerViewAdapter<MainAdapter.MainVH
 
     @Override
     public int getItemCount(int section) {
-        return 6;
+        return 8;
     }
 
     @Override
@@ -29,8 +29,8 @@ public class MainAdapter extends SectionedRecyclerViewAdapter<MainAdapter.MainVH
     }
 
     @Override
-    public void onBindViewHolder(MainVH holder, int section, int position) {
-        holder.title.setText(String.format("S:%d, P:%d", section + 1, position + 1));
+    public void onBindViewHolder(MainVH holder, int section, int relativePosition, int absolutePosition) {
+        holder.title.setText(String.format("S:%d, P:%d, A:%d", section + 1, relativePosition + 1, absolutePosition + 1));
     }
 
     @Override
