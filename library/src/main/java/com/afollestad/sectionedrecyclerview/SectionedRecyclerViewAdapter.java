@@ -18,12 +18,10 @@ public abstract class SectionedRecyclerViewAdapter<VH extends RecyclerView.ViewH
     private final static int VIEW_TYPE_ITEM = 1;
 
     private final ArrayMap<Integer, Integer> mHeaderLocationMap;
-    private final ArrayMap<Integer, Integer> mSectionSizeMap;
     private GridLayoutManager mLayoutManager;
 
     public SectionedRecyclerViewAdapter() {
         mHeaderLocationMap = new ArrayMap<>();
-        mSectionSizeMap = new ArrayMap<>();
     }
 
     public abstract int getSectionCount();
@@ -53,36 +51,19 @@ public abstract class SectionedRecyclerViewAdapter<VH extends RecyclerView.ViewH
         });
     }
 
-    private int lookupSection(int itemPosition) {
-        synchronized (mHeaderLocationMap) {
-            boolean inBounds = false;
-            Integer lastKey = null;
-            for (Integer key : mHeaderLocationMap.keySet()) {
-                if (inBounds && key > itemPosition) {
-                    return mHeaderLocationMap.get(lastKey);
-                } else if (itemPosition >= key) {
-                    inBounds = true;
-                }
-                lastKey = key;
-            }
-            return -1;
-        }
-    }
-
     // returns section along with offsetted position
-    private int[] getOffsettedSectionAndPosition(int itemPosition) {
+    private int[] getSectionIndexAndRelativePosition(int itemPosition) {
         synchronized (mHeaderLocationMap) {
-            boolean inBounds = false;
-            Integer lastKey = null;
-            for (Integer key : mHeaderLocationMap.keySet()) {
-                if (inBounds && key > itemPosition) {
-                    return new int[]{mHeaderLocationMap.get(lastKey), itemPosition - lastKey - 1};
-                } else if (itemPosition >= key) {
-                    inBounds = true;
+            Integer lastSectionIndex = -1;
+            for (final Integer sectionIndex : mHeaderLocationMap.keySet()) {
+                if (itemPosition > sectionIndex) {
+                    lastSectionIndex = sectionIndex;
+                } else {
+                    break;
                 }
-                lastKey = key;
+                lastSectionIndex = sectionIndex;
             }
-            return new int[]{-1, -1};
+            return new int[]{mHeaderLocationMap.get(lastSectionIndex), itemPosition - lastSectionIndex - 1};
         }
     }
 
@@ -90,12 +71,9 @@ public abstract class SectionedRecyclerViewAdapter<VH extends RecyclerView.ViewH
     public final int getItemCount() {
         int count = 0;
         mHeaderLocationMap.clear();
-        mSectionSizeMap.clear();
         for (int s = 0; s < getSectionCount(); s++) {
             mHeaderLocationMap.put(count, s);
-            final int itemCount = getItemCount(s);
-            mSectionSizeMap.put(s, itemCount);
-            count += itemCount + 1;
+            count += getItemCount(s) + 1;
         }
         return count;
     }
@@ -141,7 +119,7 @@ public abstract class SectionedRecyclerViewAdapter<VH extends RecyclerView.ViewH
             onBindHeaderViewHolder(holder, mHeaderLocationMap.get(position));
         } else {
             if (layoutParams != null) layoutParams.setFullSpan(false);
-            final int[] sectionAndPos = getOffsettedSectionAndPosition(position);
+            final int[] sectionAndPos = getSectionIndexAndRelativePosition(position);
             onBindViewHolder(holder, sectionAndPos[0],
                     // offset section view positions
                     sectionAndPos[1],

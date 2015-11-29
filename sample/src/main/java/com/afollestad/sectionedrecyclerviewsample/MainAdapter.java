@@ -20,9 +20,9 @@ public class MainAdapter extends SectionedRecyclerViewAdapter<MainAdapter.MainVH
 
     @Override
     public int getItemCount(int section) {
-        if(section % 2 == 0)
+//        if (section % 2 == 0)
             return 4; // even sections get 4 items
-        return 8; // odd get 8 
+//        return 8; // odd get 8
     }
 
     @Override
@@ -32,7 +32,7 @@ public class MainAdapter extends SectionedRecyclerViewAdapter<MainAdapter.MainVH
 
     @Override
     public void onBindViewHolder(MainVH holder, int section, int relativePosition, int absolutePosition) {
-        holder.title.setText(String.format("S:%d, P:%d, A:%d", section + 1, relativePosition + 1, absolutePosition + 1));
+        holder.title.setText(String.format("S:%d, P:%d, A:%d", section, relativePosition, absolutePosition));
     }
 
     @Override
