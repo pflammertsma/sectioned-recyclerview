@@ -25,7 +25,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile('com.github.afollestad.sectioned-recyclerview:0.1.0') {
+    compile('com.github.afollestad:sectioned-recyclerview:0.1.0') {
         transitive = true
     }
 }
